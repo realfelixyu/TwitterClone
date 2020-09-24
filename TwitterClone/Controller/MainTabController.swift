@@ -11,6 +11,15 @@ import Firebase
 
 class MainTabController: UITabBarController {
     
+    var user: User? {
+        didSet {
+            print("set user in maintab")
+            guard let nav = viewControllers?[0] as? UINavigationController else {return}
+            guard let feed = nav.viewControllers.first as? FeedController else {return}
+            feed.user = user
+        }
+    }
+    
     let actionButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = .white
@@ -28,7 +37,11 @@ class MainTabController: UITabBarController {
     }
     
     func fetchUser() {
-        UserService.shared.fetchUser()
+        print("going to fetch user")
+        UserService.shared.fetchUser { (user) in
+            print("in fetch user completion block")
+            self.user = user
+        }
     }
     
     func authenticateUserAndConfigureUI() {
@@ -39,6 +52,7 @@ class MainTabController: UITabBarController {
                 self.present(nav, animated: true, completion: nil)
             }
         } else {
+            print("logged in user")
             configureViewControllers()
             configureUI()
             fetchUser()
@@ -55,7 +69,10 @@ class MainTabController: UITabBarController {
     }
     
     @objc func actionButtonTapped() {
-        
+        guard let user = user else {return}
+        let nav = UINavigationController(rootViewController: UploadTweetController(user: user))
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true, completion: nil)
     }
     
     func configureUI() {
