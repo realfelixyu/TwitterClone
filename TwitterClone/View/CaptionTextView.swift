@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class CaptainTextView: UITextView {
+class CaptionTextView: UITextView {
     
     let placeHolderLabel: UILabel = {
         let label = UILabel()

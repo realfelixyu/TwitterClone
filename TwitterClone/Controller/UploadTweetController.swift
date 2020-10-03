@@ -28,7 +28,7 @@ class UploadTweetController: UIViewController {
         return button
     }()
     
-    private let captionTextView = CaptainTextView()
+    private let captionTextView = CaptionTextView()
     
     private let profileImageView: UIImageView = {
         let iv = UIImageView()
