@@ -9,7 +9,21 @@
 import Foundation
 import UIKit
 
+protocol ProfileHeaderDelegate: class {
+    func handleDismissal()
+    func handleEditProfileFollow(_ header: ProfileHeader)
+}
+
 class ProfileHeader: UICollectionReusableView {
+    
+    var user: User? {
+        didSet {
+            //this gets called everytime user is changed by following/unfollowing
+            configure()
+        }
+    }
+    
+    weak var delegate: ProfileHeaderDelegate?
     
     private let filterBar = ProfileFilterView()
     
@@ -41,7 +55,7 @@ class ProfileHeader: UICollectionReusableView {
         return iv
     }()
     
-    private lazy var editProfileFollowbutton: UIButton = {
+    lazy var editProfileFollowbutton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Loading", for: .normal)
         button.layer.borderColor = UIColor.twitterBlue.cgColor
@@ -56,7 +70,6 @@ class ProfileHeader: UICollectionReusableView {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textColor = .black
-        label.text = "Test Username Label"
         return label
     }()
     
@@ -64,7 +77,6 @@ class ProfileHeader: UICollectionReusableView {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 16)
         label.textColor = .lightGray
-        label.text = "Test Email Label"
         return label
     }()
     
@@ -80,6 +92,22 @@ class ProfileHeader: UICollectionReusableView {
         let view = UIView()
         view.backgroundColor = .twitterBlue
         return view
+    }()
+    
+    private let followingLabel: UILabel = {
+        let label = UILabel()
+        let followTap = UITapGestureRecognizer(target: self, action: #selector(handleFollowingTapped))
+        label.isUserInteractionEnabled = true
+        label.addGestureRecognizer(followTap)
+        return label
+    }()
+    
+    private let followersLabel: UILabel = {
+        let label = UILabel()
+        let followTap = UITapGestureRecognizer(target: self, action: #selector(handleFollowersTapped))
+        label.isUserInteractionEnabled = true
+        label.addGestureRecognizer(followTap)
+        return label
     }()
     
     override init(frame: CGRect) {
@@ -109,6 +137,13 @@ class ProfileHeader: UICollectionReusableView {
         addSubview(userDetailsStack)
         userDetailsStack.anchor(top: profileImageView.bottomAnchor, left: leftAnchor, right: rightAnchor, paddingTop: 8, paddingLeft: 12, paddingRight: 12)
         
+        let followStack = UIStackView(arrangedSubviews: [followingLabel,followersLabel])
+        followStack.axis = .horizontal
+        followStack.spacing = 8
+        followStack.distribution = .fillEqually
+        addSubview(followStack)
+        followStack.anchor(top: userDetailsStack.bottomAnchor, left: leftAnchor, paddingTop: 8, paddingLeft: 12)
+        
         addSubview(filterBar)
         filterBar.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, height:50)
         
@@ -121,11 +156,33 @@ class ProfileHeader: UICollectionReusableView {
     }
     
     @objc func handleDismissal() {
-        
+        delegate?.handleDismissal()
     }
     
     @objc func handleEditProfileFollow() {
+        delegate?.handleEditProfileFollow(self)
+    }
+    
+    @objc func handleFollowersTapped() {
         
+    }
+    
+    @objc func handleFollowingTapped() {
+        
+    }
+    
+    func configure() {
+        guard let user = user else { return }
+        let viewModel = ProfileHeaderViewModel(user: user)
+        
+        profileImageView.sd_setImage(with: user.profileImageUrl)
+        print("setting actionbuttontitle to \(viewModel.actionButtonTitle)")
+        editProfileFollowbutton.setTitle(viewModel.actionButtonTitle, for: .normal)
+        
+        followingLabel.attributedText = viewModel.followingString
+        followersLabel.attributedText = viewModel.followersString
+        usernameLabel.text = viewModel.usernameText
+        emailLabel.text = viewModel.emailText
     }
     
 }

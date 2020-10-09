@@ -10,14 +10,14 @@ import Foundation
 import UIKit
 
 protocol TweetCellDelegate: class {
-    func handleProfileImageTapped()
+    func handleProfileImageTapped(_ cell: TweetCell)
+    func handleReplyTapped(_ cell: TweetCell)
 }
 
 class TweetCell: UICollectionViewCell {
     
     var tweet: Tweet? {
         didSet { configure()
-            print("tweet cell set")
         }
     }
     
@@ -41,7 +41,6 @@ class TweetCell: UICollectionViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 16)
         label.numberOfLines = 0
-        label.text = "test text"
         return label
     }()
     
@@ -105,8 +104,6 @@ class TweetCell: UICollectionViewCell {
         actionStack.centerX(inView: self)
         actionStack.anchor(bottom: bottomAnchor, paddingBottom: 8)
         
-        infoLabel.text = "Felix"
-        
         let underlineView = UIView()
         addSubview(underlineView)
         underlineView.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, height: 1)
@@ -115,7 +112,6 @@ class TweetCell: UICollectionViewCell {
     func configure() {
         guard let tweet = tweet else { return }
         let viewModel = TweetViewModel(tweet: tweet)
-        
         captionLabel.text = tweet.caption
         profileImageView.sd_setImage(with: viewModel.profileImageUrl)
         infoLabel.attributedText = viewModel.userInfoText
@@ -126,11 +122,11 @@ class TweetCell: UICollectionViewCell {
     }
     
     @objc func handleProfileImageTapped() {
-        delegate?.handleProfileImageTapped()
+        delegate?.handleProfileImageTapped(self)
     }
     
     @objc func handleCommentTapped() {
-        
+        delegate?.handleReplyTapped(self)
     }
     
     @objc func handleRetweetTapped() {
