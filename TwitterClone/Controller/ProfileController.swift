@@ -86,8 +86,7 @@ extension ProfileController {
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! TweetCell
-        print(tweets)
-        print(cell.tweet)
+        
         cell.tweet = tweets[indexPath.row]
         return cell
     }
@@ -132,6 +131,8 @@ extension ProfileController: ProfileHeaderDelegate {
                 //print("user is folowed is \(self.user.isFollowed) after button tap")
                 //header.editProfileFollowbutton.setTitle("Following", for: .normal)
                 self.collectionView.reloadData()
+                
+                NotificationService.shared.uploadNotification(type: .follow, user: self.user)
             }
         }
     }

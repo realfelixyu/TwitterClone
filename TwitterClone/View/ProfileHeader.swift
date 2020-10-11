@@ -176,7 +176,6 @@ class ProfileHeader: UICollectionReusableView {
         let viewModel = ProfileHeaderViewModel(user: user)
         
         profileImageView.sd_setImage(with: user.profileImageUrl)
-        print("setting actionbuttontitle to \(viewModel.actionButtonTitle)")
         editProfileFollowbutton.setTitle(viewModel.actionButtonTitle, for: .normal)
         
         followingLabel.attributedText = viewModel.followingString

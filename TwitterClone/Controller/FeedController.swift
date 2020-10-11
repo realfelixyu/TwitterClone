@@ -23,7 +23,6 @@ class FeedController: UICollectionViewController {
     
     private var tweets = [Tweet]() {
         didSet { collectionView.reloadData()
-            print(tweets)
         }
     }
     
@@ -41,8 +40,17 @@ class FeedController: UICollectionViewController {
     
     func fetchTweets() {
         TweetService.shared.fetchTweets { (tweets) in
-            print("tweets fetched")
             self.tweets = tweets
+            self.checkIfUserLikedTweets(tweets)
+        }
+    }
+    
+    func checkIfUserLikedTweets(_ tweets: [Tweet]) {
+        for (index, tweet) in tweets.enumerated() {
+            TweetService.shared.checkIfUserLikedTweet(tweet) { (didLike) in
+                guard didLike == true else {return}
+                self.tweets[index].didLike = true
+            }
         }
     }
     
@@ -105,6 +113,21 @@ extension FeedController: UICollectionViewDelegateFlowLayout {
 }
 
 extension FeedController: TweetCellDelegate {
+    
+    func handleLikeTapped(_ cell: TweetCell) {
+        guard let tweet = cell.tweet else {return}
+        print("from handle liketapped \(tweet.didLike)")
+        TweetService.shared.likeTweet(tweet: tweet) { (err, ref) in
+            cell.tweet?.didLike.toggle()
+            let likes = tweet.didLike ? tweet.likes - 1: tweet.likes + 1
+            // didSet gets called for cell.tweet and cell calls configure() with update properties
+            cell.tweet?.likes = likes
+            
+            //
+            guard !tweet.didLike else {return}
+            NotificationService.shared.uploadNotification(type: .like, tweet: tweet)
+        }
+    }
     
     func handleReplyTapped(_ cell: TweetCell) {
         guard let tweet = cell.tweet else {return}
