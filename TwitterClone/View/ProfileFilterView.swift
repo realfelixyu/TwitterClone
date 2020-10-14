@@ -28,6 +28,12 @@ class ProfileFilterView: UIView {
         return cv
     }()
     
+    private let underlineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .twitterBlue
+        return view
+    }()
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -36,6 +42,14 @@ class ProfileFilterView: UIView {
         let selectedIndexPath = IndexPath(row: 0, section: 0)
         collectionView.selectItem(at: selectedIndexPath, animated: true, scrollPosition: .left)
         collectionView.addConstraintsToFillView(self)
+    }
+    
+    //called after everything is already layed out, after init
+    override func layoutSubviews() {
+        print("layout subviews called")
+        addSubview(underlineView)
+        //has to call layoutSubviews because frame is 0 in init
+        underlineView.anchor(left: leftAnchor, bottom: bottomAnchor, width: frame.width / 3, height: 2)
     }
     
     required init?(coder: NSCoder) {
@@ -69,6 +83,12 @@ extension ProfileFilterView: UICollectionViewDelegateFlowLayout {
 
 extension ProfileFilterView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath)
+        let xPosition = cell?.frame.origin.x ?? 0
+        UIView.animate(withDuration: 0.3) {
+            self.underlineView.frame.origin.x = xPosition
+        }
+        
         delegate?.filterView(self, didSelect: indexPath)
     }
 }

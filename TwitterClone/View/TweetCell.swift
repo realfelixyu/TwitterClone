@@ -88,25 +88,25 @@ class TweetCell: UICollectionViewCell {
         super.init(frame: frame)
         
         backgroundColor = .white
-        addSubview(profileImageView)
+        contentView.addSubview(profileImageView)
         profileImageView.anchor(top: topAnchor, left: leftAnchor, paddingTop: 12, paddingLeft: 8)
         let stack = UIStackView(arrangedSubviews: [infoLabel, captionLabel])
         stack.axis = .vertical
         stack.distribution = .fillProportionally
         stack.spacing = 4
         
-        addSubview(stack)
+        contentView.addSubview(stack)
         stack.anchor(top: profileImageView.topAnchor, left: profileImageView.rightAnchor, right: rightAnchor, paddingLeft: 12, paddingRight: 12)
         
         let actionStack = UIStackView(arrangedSubviews: [commentButton, retweetButton, likeButton, shareButton])
         actionStack.axis = .horizontal
         actionStack.spacing = 72
-        addSubview(actionStack)
+        contentView.addSubview(actionStack)
         actionStack.centerX(inView: self)
         actionStack.anchor(bottom: bottomAnchor, paddingBottom: 8)
         
         let underlineView = UIView()
-        addSubview(underlineView)
+        contentView.addSubview(underlineView)
         underlineView.anchor(left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, height: 1)
     }
     

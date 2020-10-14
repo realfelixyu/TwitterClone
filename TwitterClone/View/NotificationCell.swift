@@ -31,7 +31,6 @@ class NotificationCell: UITableViewCell {
         iv.setDimensions(width: 40, height: 40)
         iv.layer.cornerRadius = 40 / 2
         iv.backgroundColor = .twitterBlue
-        print("setting up profileImageView")
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleProfileImageTapped))
         iv.addGestureRecognizer(tap)
         iv.isUserInteractionEnabled = true
@@ -45,7 +44,6 @@ class NotificationCell: UITableViewCell {
         button.layer.borderColor = UIColor.twitterBlue.cgColor
         button.layer.borderWidth = 2
         button.setTitle("test title", for: .normal)
-        print("setting up follow button")
         button.addTarget(self, action: #selector(handleFollowTapped), for: .touchUpInside)
         return button
     }()
@@ -59,20 +57,21 @@ class NotificationCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        let stack = UIStackView(arrangedSubviews: [profileImageView])
+        let stack = UIStackView(arrangedSubviews: [profileImageView, notificationLabel])
         stack.spacing = 8
         stack.alignment = .center
         
-        addSubview(stack)
+        contentView.addSubview(stack)
         stack.centerY(inView: self, leftAnchor: leftAnchor, paddingLeft: 12)
         stack.anchor(right: rightAnchor, paddingRight: 12)
         
-        addSubview(followButton)
-        followButton.addTarget(self, action: #selector(handleFollowTapped), for: .touchUpInside)
+        contentView.addSubview(followButton)
+        //followButton.addTarget(self, action: #selector(handleFollowTapped), for: .touchUpInside)
         followButton.centerY(inView: self)
         followButton.setDimensions(width: 88, height: 32)
         followButton.layer.cornerRadius = 32 / 2
         followButton.anchor(right: rightAnchor, paddingRight: 12)
+        
         //debug
 //
 //        let debugButton = UIButton(type: .system)
@@ -103,7 +102,6 @@ class NotificationCell: UITableViewCell {
     
     func configure() {
         guard let notification = notification else {return}
-        print("notification is not nil")
         let viewModel = NotificationViewModel(notification: notification)
         
         profileImageView.sd_setImage(with: viewModel.profileImageUrl)
