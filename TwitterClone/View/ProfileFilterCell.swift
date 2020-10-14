@@ -29,13 +29,15 @@ class ProfileFilterCell: UICollectionViewCell {
         didSet {
             titleLabel.font = isSelected ? UIFont.boldSystemFont(ofSize: 16) : UIFont.systemFont(ofSize: 14)
             titleLabel.textColor = isSelected ? .twitterBlue : .lightGray
+            print("did set in ProfileFilterCell")
         }
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(titleLabel)
+        contentView.addSubview(titleLabel)
         titleLabel.center(inView: self)
+        print("init ProfileFilterCell")
     }
     
     required init?(coder: NSCoder) {

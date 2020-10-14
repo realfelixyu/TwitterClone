@@ -12,7 +12,7 @@ import UIKit
 private let reuseIdentifier = "ProfileFilterCell"
 
 protocol ProfileFilterViewDelegate: class {
-    func filterView(_ view: ProfileFilterView, didSelect indexPath: IndexPath)
+    func filterView(_ view: ProfileFilterView, didSelect index: Int)
 }
 
 class ProfileFilterView: UIView {
@@ -36,6 +36,7 @@ class ProfileFilterView: UIView {
     
     
     override init(frame: CGRect) {
+        print("INIT PROFILEFILTERVIEW")
         super.init(frame: frame)
         addSubview(collectionView)
         collectionView.register(ProfileFilterCell.self, forCellWithReuseIdentifier: reuseIdentifier)
@@ -45,6 +46,13 @@ class ProfileFilterView: UIView {
     }
     
     //called after everything is already layed out, after init
+//    override func layoutSubviews() {
+//        print("layout subviews called")
+//        addSubview(underlineView)
+//        //has to call layoutSubviews because frame is 0 in init
+//        underlineView.anchor(left: leftAnchor, bottom: bottomAnchor, width: frame.width / 3, height: 2)
+//    }
+    
     override func layoutSubviews() {
         print("layout subviews called")
         addSubview(underlineView)
@@ -89,6 +97,6 @@ extension ProfileFilterView: UICollectionViewDelegate {
             self.underlineView.frame.origin.x = xPosition
         }
         
-        delegate?.filterView(self, didSelect: indexPath)
+        delegate?.filterView(self, didSelect: indexPath.row)
     }
 }
