@@ -109,7 +109,8 @@ class RegistrationController: UIViewController {
         guard let email = emailTextField.text else {return}
         guard let password = passwordTextField.text else {return}
         guard let username = usernameTextField.text else {return}
-        let credentials = AuthCredentials(email: email, password: password, username: username, profileImage: profileImage)
+        let bio = " "
+        let credentials = AuthCredentials(email: email, password: password, username: username, profileImage: profileImage, bio: bio)
         AuthService.shared.registeruser(credentials: credentials) { (error, ref) in
             print("debug: sign up successful, handle interface change")
             guard let window = UIApplication.shared.windows.first(where: {$0.isKeyWindow}) else {return}

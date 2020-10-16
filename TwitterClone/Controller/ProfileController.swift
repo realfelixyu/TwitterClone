@@ -161,6 +161,11 @@ extension ProfileController: ProfileHeaderDelegate {
     func handleEditProfileFollow(_ header: ProfileHeader) {
         print("user is folowed is \(user.isFollowed) before button tap")
         if user.isCurrentUser {
+            let controller = EditProfileController(user: user)
+            controller.delegate = self
+            let nav = UINavigationController(rootViewController: controller)
+            nav.modalPresentationStyle = .fullScreen
+            present(nav, animated: true, completion: nil)
             return
         }
         if user.isFollowed {
@@ -185,5 +190,13 @@ extension ProfileController: ProfileHeaderDelegate {
     
     func handleDismissal() {
         navigationController?.popViewController(animated: true)
+    }
+}
+
+extension ProfileController: EditProfileControllerDelegate {
+    func controller(_ controller: EditProfileController, wantsToUpdate user: User) {
+        controller.dismiss(animated: true, completion: nil)
+        self.user = user
+        self.collectionView.reloadData()
     }
 }

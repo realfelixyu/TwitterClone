@@ -15,6 +15,7 @@ struct AuthCredentials {
     let password: String
     let username: String
     let profileImage: UIImage
+    let bio: String
 }
 
 struct AuthService {
@@ -29,6 +30,7 @@ struct AuthService {
         let password = credentials.password
         let username = credentials.username
         let profileImage = credentials.profileImage
+        let bio = credentials.bio
         
         guard let imageData = profileImage.jpegData(compressionQuality: 0.3) else {return}
         let filename = NSUUID().uuidString
@@ -48,7 +50,7 @@ struct AuthService {
                     }
                     guard let uid = result?.user.uid else {return}
                     
-                    let values = ["email": email, "username": username, "profileImageUrl": profileImageUrl]
+                    let values = ["email": email, "username": username, "profileImageUrl": profileImageUrl, "bio": bio]
                     
                     REF_USERS.child(uid).updateChildValues(values, withCompletionBlock: completion)
                 }
