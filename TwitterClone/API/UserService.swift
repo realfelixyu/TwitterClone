@@ -19,6 +19,7 @@ struct UserService {
         //guard let uid = Auth.auth().currentUser?.uid else {return}
         REF_USERS.child(uid).observeSingleEvent(of: .value) { (snapshot) in
             guard let dictionary = snapshot.value as? [String: AnyObject] else {return}
+            print("obtained User object")
             let user = User(uid: uid, dictionary: dictionary)
             completion(user)
         }
@@ -96,6 +97,18 @@ struct UserService {
         
         REF_USERS.child(uid).updateChildValues(values, withCompletionBlock: completion)
         
+    }
+    
+    func fetchUser(withUsername username: String, completion: @escaping(User) -> Void) {
+        print("DEBUG: called before making API request in fetchuser with username")
+        REF_USER_USERNAMES.child(username).observeSingleEvent(of: .value) { (snapshot) in
+            if (!snapshot.exists()) {
+                print("DEBUG: snapshot doesn't exist when trying to fetch user from username \(username)")
+            }
+            guard let uid = snapshot.value as? String else {return}
+            print("DEBUG: calling fetchuser with uid")
+            self.fetchUser(uid: uid, completion: completion)
+        }
     }
 }
 

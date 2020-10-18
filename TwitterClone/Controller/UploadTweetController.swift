@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import ActiveLabel
 
 class UploadTweetController: UIViewController {
     
@@ -42,11 +43,11 @@ class UploadTweetController: UIViewController {
         return iv
     }()
     
-    private lazy var replyLabel: UILabel = {
-        let label = UILabel()
+    private lazy var replyLabel: ActiveLabel = {
+        let label = ActiveLabel()
         label.font = UIFont.systemFont(ofSize: 16)
         label.textColor = .lightGray
-        label.text = "replying to retard"
+        label.mentionColor = .twitterBlue
         label.widthAnchor.constraint(equalToConstant: view.frame.width).isActive = true
         return label
     }()
@@ -64,7 +65,7 @@ class UploadTweetController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
-        
+        configureMentionHandler()
     }
     
     @objc func handleUploadTweet() {
@@ -75,7 +76,7 @@ class UploadTweetController: UIViewController {
             }
             
             if case .reply(let tweet) = self.config {
-                NotificationService.shared.uploadNotification(type: .reply, tweet: tweet)
+                NotificationService.shared.uploadNotification(type: .reply, toUser: self.user)
             }
             
             print("Tweet did upload to database..")
@@ -118,6 +119,12 @@ class UploadTweetController: UIViewController {
         navigationController?.navigationBar.isTranslucent = false
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(handleCancel))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: actionButton)
+    }
+    
+    func configureMentionHandler() {
+        replyLabel.handleMentionTap { (mention) in
+            
+        }
     }
     
 }

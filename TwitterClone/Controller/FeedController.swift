@@ -82,14 +82,25 @@ class FeedController: UICollectionViewController {
         profileImageView.setDimensions(width: 32, height: 32)
         profileImageView.layer.cornerRadius = 32 / 2
         profileImageView.layer.masksToBounds = true
+        profileImageView.isUserInteractionEnabled = true
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleProfileImageTap))
+        profileImageView.addGestureRecognizer(tap)
         
         profileImageView.sd_setImage(with: user.profileImageUrl, completed: nil)
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: profileImageView)
+        
     }
     
     @objc func handleRefresh() {
         fetchTweets()
+    }
+    
+    @objc func handleProfileImageTap() {
+        guard let user = user else {return}
+        let controller = ProfileController(user: user)
+        navigationController?.pushViewController(controller, animated: true)
     }
 }
 
@@ -125,6 +136,15 @@ extension FeedController: UICollectionViewDelegateFlowLayout {
 }
 
 extension FeedController: TweetCellDelegate {
+    func handleFetchUser(withUsername username: String) {
+        print("DEBUG: handleFetchUser in feedcontroller")
+        print("\(username)")
+        UserService.shared.fetchUser(withUsername: username) { (user) in
+            print("DEBUG: in handleFetchUser completion")
+            let controller = ProfileController(user: user)
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
+    }
     
     func handleLikeTapped(_ cell: TweetCell) {
         guard let tweet = cell.tweet else {return}
@@ -137,7 +157,7 @@ extension FeedController: TweetCellDelegate {
             
             //
             guard !tweet.didLike else {return}
-            NotificationService.shared.uploadNotification(type: .like, tweet: tweet)
+            NotificationService.shared.uploadNotification(type: .like, tweetID: tweet.tweetID, toUser: tweet.user)
         }
     }
     

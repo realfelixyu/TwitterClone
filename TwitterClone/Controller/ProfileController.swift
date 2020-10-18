@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Firebase
 
 private let reuseIdentifier = "TweetCell"
 private let headerIdentifier = "ProfileHeader"
@@ -149,7 +150,11 @@ extension ProfileController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 350)
+        var height: CGFloat = 320
+        if user.bio != nil && user.bio.count > 50 {
+            height += 50
+        }
+        return CGSize(width: view.frame.width, height: height)
     }
 }
 
@@ -183,7 +188,7 @@ extension ProfileController: ProfileHeaderDelegate {
                 //header.editProfileFollowbutton.setTitle("Following", for: .normal)
                 self.collectionView.reloadData()
                 
-                NotificationService.shared.uploadNotification(type: .follow, user: self.user)
+                NotificationService.shared.uploadNotification(type: .follow, toUser: self.user)
             }
         }
     }
@@ -194,6 +199,17 @@ extension ProfileController: ProfileHeaderDelegate {
 }
 
 extension ProfileController: EditProfileControllerDelegate {
+    func handleLogout() {
+        do {
+            try Auth.auth().signOut()
+            let nav = UINavigationController(rootViewController: LoginController())
+            nav.modalPresentationStyle = .fullScreen
+            self.present(nav, animated: true, completion: nil)
+        } catch let error {
+            print(error.localizedDescription)
+        }
+    }
+    
     func controller(_ controller: EditProfileController, wantsToUpdate user: User) {
         controller.dismiss(animated: true, completion: nil)
         self.user = user

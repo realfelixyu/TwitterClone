@@ -13,6 +13,7 @@ private let reuseIdentifier = "EditProfileCell"
 
 protocol EditProfileControllerDelegate: AnyObject {
     func controller(_ controller: EditProfileController, wantsToUpdate user: User)
+    func handleLogout()
 }
 
 class EditProfileController: UITableViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
@@ -20,6 +21,7 @@ class EditProfileController: UITableViewController, UIImagePickerControllerDeleg
     private var user: User
     private lazy var headerView = EditProfileHeader(user: user)
     private let imagePicker = UIImagePickerController()
+    private let footerView = EditProfileFooter()
     weak var delegate: EditProfileControllerDelegate?
     
     private var imageChanged: Bool {
@@ -107,7 +109,9 @@ class EditProfileController: UITableViewController, UIImagePickerControllerDeleg
     func configureTableView() {
         tableView.tableHeaderView = headerView
         headerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 180)
-        tableView.tableFooterView = UIView()
+        footerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 100)
+        footerView.delegate = self
+        tableView.tableFooterView = footerView
         
         headerView.delegate = self
         tableView.register(EditProfileCell.self, forCellReuseIdentifier: reuseIdentifier)
@@ -168,5 +172,19 @@ extension EditProfileController: EditProfileTableViewCellDelegate {
         case .bio:
             user.bio = cell.bioTextView.text
         }
+    }
+}
+
+extension EditProfileController: EditProfileFootDelegate {
+    func handleLogout() {
+        let alert = UIAlertController(title: nil, message: "Are you sure you want to logout?", preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Logout", style: .destructive, handler: { (_) in
+            self.dismiss(animated: true) {
+                self.delegate?.handleLogout()
+            }
+
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
 }
