@@ -1,10 +1,7 @@
+//  Created by Felix Yu on 9/20/20.
+//  Copyright © 2020 Felix Yu. All rights reserved.
 //
-//  Extensions.swift
-//  TwitterTutorial
-//
-//  Created by Stephen Dowless on 1/12/20.
-//  Copyright © 2020 Stephan Dowless. All rights reserved.
-//
+
 
 import UIKit
 
