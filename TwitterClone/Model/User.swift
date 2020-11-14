@@ -27,7 +27,7 @@ struct User {
         self.username = dictionary["username"] as? String ?? ""
         self.email = dictionary["email"] as? String ?? ""
         self.bio = dictionary["bio"] as? String ?? ""
-        if let profileImageUrlString = dictionary["profileImageUrl"] as? String ?? "" {
+        if let profileImageUrlString = dictionary["profileImageUrl"] as? String? ?? "" {
             guard let url = URL(string: profileImageUrlString) else {return}
             self.profileImageUrl = url
         }
